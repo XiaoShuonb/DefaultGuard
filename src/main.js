@@ -1,0 +1,23 @@
+import {readFileSync,existsSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {setDefaultResultOrder} from 'node:dns';
+import {setDefaultAutoSelectFamily} from 'node:net';
+import {openDatabase} from './db.js';
+import {Auth} from './security.js';
+import {Service} from './service.js';
+import {Telegram,GuardBot} from './bot.js';
+import {createWebServer} from './server.js';
+setDefaultResultOrder('ipv4first');setDefaultAutoSelectFamily(false);
+if(existsSync('.env'))for(const line of readFileSync('.env','utf8').split('\n')){const m=/^([A-Z_]+)=(.*)$/.exec(line.trim());if(m&&process.env[m[1]]===undefined)process.env[m[1]]=m[2];}
+const env=process.env;
+const config={owner:env.OWNER_ID||'',botToken:env.BOT_TOKEN||'',origin:(env.PUBLIC_ORIGIN||'http://localhost:18189').replace(/\/$/,''),redirect:env.REDIRECT_URL||'https://www.baidu.com/',entryTtl:21600,loginTtl:180,sessionTtl:28800,sessionIdle:1800,secureCookie:env.COOKIE_SECURE!=='false',pollSeconds:Number(env.POLL_SECONDS||25),healthSecret:env.HEALTH_SECRET||'',webDir:resolve('web/dist')};
+if(!/^\d{1,16}$/.test(config.owner))throw new Error('配置 OWNER_ID');
+if(env.BOT_ENABLED!=='false'&&!/^\d{6,16}:[A-Za-z0-9_-]{30,}$/.test(config.botToken))throw new Error('配置 BOT_TOKEN');
+if(!/^https?:\/\//.test(config.origin)||!/^https:\/\//.test(config.redirect))throw new Error('Origin/redirect 格式错误');
+if(!config.healthSecret)throw new Error('配置 HEALTH_SECRET');
+const db=openDatabase(resolve(env.DB_FILE||'data/guard.sqlite')),auth=new Auth(db,config),service=new Service(db,config),tg=new Telegram(config),bot=new GuardBot(db,config,auth,service,tg);
+const server=createWebServer(db,config,auth,service);
+server.listen(Number(env.PORT||18189),env.HOST||'127.0.0.1',()=>console.log('DefaultGuard HTTP ready'));
+if(env.BOT_ENABLED!=='false')bot.start().catch(e=>{console.error(`Startup failed: ${e.code||e.cause?.code||'configuration/network'}`);process.exitCode=1;server.close();});
+process.on('SIGTERM',()=>{bot.stop();server.close(()=>process.exit(0));setTimeout(()=>process.exit(0),5000).unref();});
+process.on('SIGINT',()=>{bot.stop();server.close(()=>process.exit(0));setTimeout(()=>process.exit(0),5000).unref();});

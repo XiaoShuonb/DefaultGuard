@@ -1,0 +1,10 @@
+<template><div class="page-container"><section class="page-hero"><div><h2>登录与安全</h2><p>入口与登录密钥仅由唯一 OWNER 在 Telegram 中生成。</p></div><ElButton @click="load">刷新</ElButton></section><ElCard class="section-card"><ElDescriptions :column="1" border><ElDescriptionsItem label="唯一管理员">{{data.owner}}</ElDescriptionsItem><ElDescriptionsItem label="固定域名">{{data.origin}}</ElDescriptionsItem><ElDescriptionsItem label="入口有效期">6 小时；重新生成立即撤销旧入口和会话</ElDescriptionsItem><ElDescriptionsItem label="当前入口到期">{{formatTime(data.entryExpires)}}</ElDescriptionsItem><ElDescriptionsItem label="登录方式">3 分钟一次性随机密钥 + 图片验证码</ElDescriptionsItem><ElDescriptionsItem label="会话期限">空闲 30 分钟退出，最长 8 小时，并受入口到期限制</ElDescriptionsItem></ElDescriptions></ElCard><ElCard class="content-card"><template #header><div class="toolbar"><span>登录会话</span><ElButton type="danger" plain @click="revokeAll">撤销全部会话</ElButton></div></template><ElTable :data="data.sessions||[]"><ElTableColumn prop="ua" label="浏览器" min-width="200"/><ElTableColumn label="最近访问" min-width="175"><template #default="{row}">{{formatTime(row.last_seen)}}</template></ElTableColumn><ElTableColumn label="状态" width="100"><template #default="{row}">{{row.revoked?'已撤销':row.expires_at<Date.now()?'已过期':row.current?'当前会话':'有效'}}</template></ElTableColumn><ElTableColumn label="操作" width="100"><template #default="{row}"><ElButton v-if="!row.revoked" size="small" @click="revoke(row)">撤销</ElButton></template></ElTableColumn></ElTable></ElCard></div></template>
+<script setup lang="ts">
+import {getSecurity,revokeSession,formatTime} from '@/api/guard'
+import {ElMessageBox} from 'element-plus'
+import {useUserStore} from '@/store/modules/user'
+const data=ref<any>({}),user=useUserStore()
+async function load(){data.value=await getSecurity()}
+async function revoke(row:any){await revokeSession({id:row.id});if(row.current)user.logOut();else await load()}
+async function revokeAll(){await ElMessageBox.confirm('确认退出全部浏览器会话？','会话安全');await revokeSession({all:true});user.logOut()}onMounted(load)
+</script>

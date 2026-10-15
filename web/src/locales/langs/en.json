@@ -1,0 +1,134 @@
+{
+  "common": {
+    "tips": "Prompt",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "logOutTips": "Do you want to log out?"
+  },
+  "menus": {
+    "login": {
+      "title": "Login"
+    }
+  },
+  "exceptionPage": {
+    "403": "Sorry, you do not have permission to access this page",
+    "404": "Sorry, the page you are trying to access does not exist",
+    "500": "Sorry, there was an error on the server",
+    "gohome": "Go Home"
+  },
+  "httpMsg": {
+    "unauthorized": "Unauthorized access, please login again",
+    "forbidden": "Access to this resource is forbidden",
+    "notFound": "The requested resource does not exist",
+    "methodNotAllowed": "Request method not allowed",
+    "requestTimeout": "Request timeout, please try again later",
+    "internalServerError": "Internal server error, please try again later",
+    "badGateway": "Bad gateway error, please try again later",
+    "serviceUnavailable": "Service temporarily unavailable, please try again later",
+    "gatewayTimeout": "Gateway timeout, please try again later",
+    "requestCancelled": "Request cancelled",
+    "networkError": "Network connection error, please check your connection",
+    "requestFailed": "Request failed",
+    "requestConfigError": "Request configuration error"
+  },
+  "login": {
+    "leftView": {
+      "title": "A fast and reliable bot operations center",
+      "subTitle": "Manage bots, groups, verification, moderation, and ledgers in one place"
+    },
+    "title": "Welcome back",
+    "subTitle": "Please enter your account and password to login",
+    "placeholder": {
+      "username": "Please enter your account",
+      "password": "Please enter your password",
+      "captcha": "Enter the image code"
+    },
+    "captchaImageAlt": "Login verification image",
+    "captchaTip": "Can't read it? Click the image for a new one",
+    "refreshCaptcha": "Refresh verification code",
+    "loadCaptcha": "Click to load",
+    "captchaFormat": "Enter the 4-digit verification code",
+    "rememberPwd": "Remember password",
+    "btnText": "Login",
+    "success": {
+      "title": "Login successful",
+      "message": "Welcome back"
+    }
+  },
+  "worktab": {
+    "btn": {
+      "refresh": "Refresh",
+      "fixed": "Fixed",
+      "unfixed": "Unfixed",
+      "closeLeft": "Close left",
+      "closeRight": "Close right",
+      "closeOther": "Close other",
+      "closeAll": "Close all"
+    }
+  },
+  "setting": {
+    "title": "Theme Settings",
+    "menuType": {
+      "title": "Menu Layout",
+      "list": ["Vertical", "Horizontal", "Mixed", "Dual"]
+    },
+    "theme": {
+      "title": "Theme Style",
+      "list": ["Light", "Dark", "System"]
+    },
+    "menu": {
+      "title": "Menu Style"
+    },
+    "color": {
+      "title": "Theme Color"
+    },
+    "box": {
+      "title": "Box Style",
+      "list": ["Border", "Shadow"]
+    },
+    "container": {
+      "title": "Container Width",
+      "list": ["Full", "Boxed"]
+    },
+    "basics": {
+      "title": "Basic Config",
+      "list": {
+        "multiTab": "Show work tab",
+        "accordion": "Sidebar accordion",
+        "collapseSidebar": "Show sidebar button",
+        "fastEnter": "Show quick entry",
+        "reloadPage": "Show reload button",
+        "breadcrumb": "Show breadcrumbs",
+        "language": "Show language selector",
+        "progressBar": "Show progress bar",
+        "weakMode": "Color weakness mode",
+        "watermark": "Global watermark",
+        "menuWidth": "Menu width",
+        "tabStyle": "Tab style",
+        "pageTransition": "Page animation",
+        "borderRadius": "Custom radius"
+      }
+    },
+    "tabStyle": {
+      "default": "Default",
+      "card": "Card",
+      "google": "Chrome"
+    },
+    "transition": {
+      "list": {
+        "none": "None",
+        "fade": "Fade",
+        "slideLeft": "Slide Left",
+        "slideBottom": "Slide Bottom",
+        "slideTop": "Slide Top"
+      }
+    },
+    "actions": {
+      "resetConfig": "Reset Config",
+      "copyConfig": "Copy Config",
+      "copySuccess": "Configuration copied to clipboard",
+      "copyFailed": "Copy failed, please try again",
+      "resetSuccess": "Default configuration restored"
+    }
+  }
+}

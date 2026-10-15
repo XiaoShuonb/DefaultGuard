@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/components/**/*.vue", "src/views/**/*.vue"],
+  "project": ["src/**/*.{ts,vue}"],
+  "ignoreDependencies": [
+    "@vue/compiler-sfc",
+    "tailwindcss",
+    "@iconify-json/icon-park-outline",
+    "@iconify-json/iconamoon",
+    "@iconify-json/ix",
+    "@iconify-json/ri"
+  ]
+}

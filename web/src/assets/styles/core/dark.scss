@@ -1,0 +1,6 @@
+$font-color: rgba(#ffffff, 0.85);
+
+html.dark {
+  --el-bg-color: var(--default-box-color);
+  --el-text-color-regular: #{$font-color};
+}

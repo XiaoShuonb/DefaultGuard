@@ -1,0 +1,12 @@
+<template><div class="page-container"><section class="page-hero"><div><h2>新人验证</h2><p>数学题按钮验证，通过前禁言；答错或超时移除。</p></div><GroupSelect v-model="group" @loaded="groups=$event"/></section><ElCard v-if="group" class="section-card"><ElForm :model="form" label-position="top"><ElRow :gutter="20"><ElCol :xs="24" :sm="8"><ElFormItem label="开启验证"><ElSwitch v-model="form.verification"/></ElFormItem></ElCol><ElCol :xs="24" :sm="8"><ElFormItem label="答题时限（秒）"><ElInputNumber v-model="form.timeoutSeconds" :min="1" :max="3600"/></ElFormItem></ElCol><ElCol :xs="24" :sm="8"><ElFormItem label="失败提示保留时间（秒；0为保留）"><ElInputNumber v-model="form.noticeDeleteSeconds" :min="0" :max="86400"/></ElFormItem></ElCol></ElRow><ElFormItem label="失败提示（支持 {name}、{group}）"><ElInput v-model="form.failureText" maxlength="2000"/></ElFormItem><ElButton type="primary" @click="save">保存设置</ElButton></ElForm></ElCard><ElCard class="content-card"><template #header><div class="toolbar"><span>验证记录</span><ElButton @click="load">刷新</ElButton></div></template><ElTable :data="rows"><ElTableColumn prop="name" label="成员" min-width="130"/><ElTableColumn label="结果" min-width="130"><template #default="{row}"><ElTag :type="row.status==='passed'?'success':row.status==='failed'?'danger':'info'">{{labels[row.status]||row.status}}</ElTag></template></ElTableColumn><ElTableColumn prop="question" label="问题"/><ElTableColumn label="开始时间" min-width="170"><template #default="{row}">{{formatTime(row.created_at)}}</template></ElTableColumn></ElTable></ElCard></div></template>
+<script setup lang="ts">
+import GroupSelect from '@/components/guard/GroupSelect.vue'
+import {getChallenges,saveSettings,type Group,formatTime} from '@/api/guard'
+import {ElMessage} from 'element-plus'
+const group=ref(''),groups=ref<Group[]>([]),all=ref<any[]>([]),form=reactive<any>({}),labels:Record<string,string>={preparing:'准备中',pending:'待验证',passing:'解除限制中',failing:'移除中',passed:'本人答题通过',failed:'答错或超时',error:'处理失败',cancelled:'已取消'}
+const rows=computed(()=>all.value.filter(c=>!group.value||c.group_id===group.value))
+watch([group,groups],()=>{const s=groups.value.find(g=>g.id===group.value)?.settings;if(s)Object.assign(form,{verification:s.verification,timeoutSeconds:s.timeoutSeconds,noticeDeleteSeconds:s.noticeDeleteSeconds,failureText:s.failureText})})
+async function load(){all.value=await getChallenges()}
+async function save(){await saveSettings(group.value,form);ElMessage.success('已保存；正在进行的验证按已发题目继续处理')}
+onMounted(load)
+</script>

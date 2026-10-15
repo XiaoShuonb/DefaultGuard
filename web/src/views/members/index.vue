@@ -1,0 +1,10 @@
+<template><div class="page-container"><section class="page-hero"><div><h2>成员与黑名单</h2><p>显示事件中已识别的成员，仅 OWNER 可执行群管操作。</p></div><GroupSelect v-model="group"/></section><ElCard class="content-card"><ElTabs v-model="tab" @tab-change="load"><ElTabPane label="成员" name="members"/><ElTabPane label="黑名单" name="blacklist"/></ElTabs><div class="toolbar"><ElButton @click="load">刷新</ElButton></div><ElTable :data="rows"><ElTableColumn prop="name" label="名称" min-width="120"/><ElTableColumn label="用户名" min-width="130"><template #default="{row}">{{row.username?'@'+row.username:'—'}}</template></ElTableColumn><ElTableColumn prop="user_id" label="Telegram ID" min-width="150"/><ElTableColumn label="权限 / 状态" min-width="170"><template #default="{row}">{{row.permissions?.join('、')||row.blocked_reason||row.reason||'正常'}}</template></ElTableColumn><ElTableColumn label="操作" min-width="160"><template #default="{row}"><ElButton v-if="tab==='members'" type="danger" plain size="small" @click="act('ban',row)">踢出并拉黑</ElButton><ElButton v-if="tab==='blacklist'" size="small" @click="act('unban',row)">解除拉黑</ElButton></template></ElTableColumn></ElTable><div v-if="tab==='members'" class="toolbar" style="margin-top:18px"><ElButton :disabled="page===0" @click="page--;load()">上一页</ElButton><span>第 {{page+1}} 页</span><ElButton :disabled="rows.length<30" @click="page++;load()">下一页</ElButton></div></ElCard></div></template>
+<script setup lang="ts">
+import GroupSelect from '@/components/guard/GroupSelect.vue'
+import {getMembers,getBlacklist,doAction} from '@/api/guard'
+import {ElMessage,ElMessageBox} from 'element-plus'
+const group=ref(''),tab=ref('members'),page=ref(0),rows=ref<any[]>([])
+async function load(){if(!group.value)return;rows.value=tab.value==='members'?await getMembers(group.value,page.value):await getBlacklist(group.value)}
+watch(group,()=>{page.value=0;void load()})
+async function act(kind:string,row:any){await ElMessageBox.confirm(`确认${kind==='ban'?'踢出并永久封禁':'解除封禁'} ${row.name||row.user_id}？`,'成员操作');await doAction(group.value,kind,row.user_id);ElMessage.success('已排队，请查看操作记录')}
+</script>

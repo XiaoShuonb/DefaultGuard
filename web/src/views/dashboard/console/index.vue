@@ -1,0 +1,7 @@
+<template><div class="page-container" v-loading="loading"><section class="page-hero"><div><span class="eyebrow">DEFAULTGUARD</span><h2>群组运营概览</h2><p>验证、广告拦截与成员活跃，一处掌握。</p></div><ElButton @click="load">刷新</ElButton></section><ElRow :gutter="16"><ElCol v-for="c in cards" :key="c.label" :xs="12" :lg="6"><ElCard class="metric-card" style="margin-bottom:16px"><span class="metric-label">{{c.label}}</span><h2>{{c.value}}</h2></ElCard></ElCol></ElRow><ElCard class="content-card"><template #header>最近操作</template><ElTable :data="data.recent||[]"><ElTableColumn label="时间" min-width="165"><template #default="{row}">{{formatTime(row.created_at)}}</template></ElTableColumn><ElTableColumn prop="action" label="动作" min-width="140"/><ElTableColumn prop="target" label="目标" min-width="140"/><ElTableColumn prop="result" label="结果" width="100"/><ElTableColumn prop="detail" label="说明" min-width="180"/></ElTable></ElCard></div></template>
+<script setup lang="ts">
+import {getOverview,formatTime} from '@/api/guard'
+const data=ref<any>({}),loading=ref(false)
+const cards=computed(()=>[{label:'已接入群组',value:data.value.groups||0},{label:'今日有效发言',value:data.value.messages||0},{label:'待验证成员',value:data.value.pending||0},{label:'已识别成员',value:data.value.members||0},{label:'黑名单记录',value:data.value.blocked||0},{label:'服务运行时间',value:`${Math.floor((data.value.uptime||0)/60)} 分钟`}])
+async function load(){loading.value=true;try{data.value=await getOverview()}finally{loading.value=false}}onMounted(load)
+</script><style lang="scss">@use '../..//platform-page.scss';</style>

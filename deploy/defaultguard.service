@@ -1,0 +1,24 @@
+[Unit]
+Description=DefaultGuard Telegram Group Manager
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=defaultguard
+Group=defaultguard
+WorkingDirectory=/opt/defaultguard/current
+EnvironmentFile=/etc/defaultguard.env
+ExecStart=/usr/bin/node src/main.js
+Restart=always
+RestartSec=5
+TimeoutStopSec=15
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/defaultguard
+MemoryMax=256M
+TasksMax=64
+[Install]
+WantedBy=multi-user.target

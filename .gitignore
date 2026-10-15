@@ -1,0 +1,12 @@
+**/node_modules/
+**/dist/
+data/
+.env
+.env.*
+!.env.example
+*.sqlite*
+*.log
+*.tar.gz
+web/.auto-import.json
+web/src/types/import/auto-imports.d.ts
+web/src/types/import/components.d.ts

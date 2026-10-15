@@ -1,0 +1,8 @@
+<template><div class="page-container"><section class="page-hero"><div><h2>活跃统计</h2><p>按收到的成员消息累计，包含被拦截的广告；编辑、重复投递和机器人消息不重复计数。</p></div><GroupSelect v-model="group"/></section><ElCard class="content-card"><div class="toolbar"><ElRadioGroup v-model="days"><ElRadioButton :value="1">今日</ElRadioButton><ElRadioButton :value="7">近七天</ElRadioButton><ElRadioButton :value="30">近三十天</ElRadioButton></ElRadioGroup><span>消息总数：{{total}} 条 · 发言人数：{{people}}</span><ElButton :loading="loading" @click="load">刷新</ElButton></div><ElTable :data="rows" v-loading="loading"><ElTableColumn type="index" :index="(i:number)=>(page-1)*20+i+1" label="排名" width="70"/><ElTableColumn prop="name" label="成员" min-width="130"/><ElTableColumn label="用户名" min-width="140"><template #default="{row}">{{row.username?'@'+row.username:'—'}}</template></ElTableColumn><ElTableColumn prop="count" label="发言次数" width="120" sortable/><ElTableColumn label="最后发言" min-width="175"><template #default="{row}">{{formatTime(row.last_seen)}}</template></ElTableColumn></ElTable><ElPagination v-if="people>20" v-model:current-page="page" :total="people" :page-size="20" layout="prev, pager, next" class="mt-4"/></ElCard></div></template>
+<script setup lang="ts">
+import GroupSelect from '@/components/guard/GroupSelect.vue'
+import {getStats,formatTime} from '@/api/guard'
+const group=ref(''),days=ref(1),rows=ref<any[]>([]),loading=ref(false),page=ref(1),total=ref(0),people=ref(0)
+async function load(){if(!group.value)return;loading.value=true;try{const data=await getStats(group.value,days.value,page.value-1);rows.value=data.rows;total.value=data.total;people.value=data.people}finally{loading.value=false}}
+watch([group,days],()=>{if(page.value!==1)page.value=1;else void load()});watch(page,load)
+</script>
